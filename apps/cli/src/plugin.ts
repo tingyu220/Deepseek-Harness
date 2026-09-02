@@ -130,6 +130,9 @@ export function runPlugin(profile: string, args: readonly string[]): number {
     cwd: dir,
     stdio: 'inherit',
     shell: process.platform === 'win32',
+    // Never flash a console window for the pnpm shim the shell launches on
+    // Windows (a GUI-triggered install must stay inside the app).
+    windowsHide: true,
   })
   if (result.error !== undefined) {
     const code = (result.error as NodeJS.ErrnoException).code

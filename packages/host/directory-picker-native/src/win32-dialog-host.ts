@@ -21,7 +21,11 @@ import type { Win32DialogWorkerData } from './win32-dialog-worker.ts'
  * @returns the spawned child process.
  */
 export function spawnDialogWorker(data: Win32DialogWorkerData): ReturnType<typeof spawn> {
-  const env = { ...process.env, DSH_DIALOG_TITLE: data.title }
+  // The desktop shell runs this package inside Electron, where
+  // `process.execPath` is the Electron binary rather than node. Spawning it
+  // below must therefore run as plain node; ELECTRON_RUN_AS_NODE is a no-op
+  // when the child really is node (the `dsh web` CLI lane).
+  const env = { ...process.env, DSH_DIALOG_TITLE: data.title, ELECTRON_RUN_AS_NODE: '1' }
   const stdio: StdioOptions = ['ignore', 'inherit', 'inherit', 'ipc']
   /* v8 ignore next 3 -- the built-output arm: tests always run unbuilt (src/) */
   if (!import.meta.url.endsWith('.ts')) {

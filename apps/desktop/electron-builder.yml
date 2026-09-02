@@ -1,0 +1,50 @@
+appId: com.deepseek.harness.desktop
+productName: DeepSeek Harness
+copyright: Copyright 2026 DeepSeek
+
+directories:
+  output: release
+  buildResources: build
+
+# electron-updater 发布源：新版本 installer + latest.yml 发到这个 GitHub 仓库的 Release。
+publish:
+  provider: github
+  owner: tingyu220
+  repo: Deepseek-Harness
+
+files:
+  - "**/*"
+
+# The dsh host resolves its plugin bundles through symlinks + require.resolve at
+# runtime; that resolution cannot point into a virtual asar archive. Ship the app
+# as real files so the plugin loader and healProfilesModuleFallback work exactly
+# as they do from source.
+asar: false
+
+npmRebuild: false
+nodeGypRebuild: false
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  category: public.app-category.developer-tools
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  category: Development

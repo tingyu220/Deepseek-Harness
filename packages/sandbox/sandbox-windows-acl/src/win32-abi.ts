@@ -139,6 +139,16 @@ export const SUB_CONTAINERS_AND_OBJECTS_INHERIT = 0x3 // == OBJECT_INHERIT_ACE |
  * handles, required because Node clears stdio inheritability at startup.
  */
 export const STARTF_USESTDHANDLES = 0x00000100
+/**
+ * STARTF_USESHOWWINDOW: STARTUPINFOW dwFlags — honor `wShowWindow` so the
+ * confined child's first (console) window is created hidden. Unlike
+ * CREATE_NO_WINDOW, this keeps the console allocated, which is what the
+ * restricted token needs (hidden-console creation flags die with
+ * STATUS_DLL_INIT_FAILED).
+ */
+export const STARTF_USESHOWWINDOW = 0x00000001
+/** SW_HIDE: ShowWindow state — the child's console window starts hidden. */
+export const SW_HIDE = 0
 /** HANDLE_FLAG_INHERIT: SetHandleInformation flag re-enabling handle inheritance for the spawned child's stdio handles. */
 export const HANDLE_FLAG_INHERIT = 0x1
 /** INFINITE: never-timeout wait value. */

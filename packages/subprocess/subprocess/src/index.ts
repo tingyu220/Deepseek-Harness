@@ -62,6 +62,10 @@ export function scrubbedParentEnv(): Record<string, string> {
   for (const [key, value] of Object.entries(process.env)) {
     if (value !== undefined && !SENSITIVE_ENV_PATTERN.test(key) && !key.toUpperCase().startsWith(DSH_ENV_PREFIX)) env[key] = value
   }
+  // When the host runs inside Electron, `process.execPath` is the Electron
+  // binary, so any child spawned through it must run as plain node. This is
+  // a no-op for every non-Electron executable (node, pwsh, cmd, bash, ...).
+  env.ELECTRON_RUN_AS_NODE = '1'
   return env
 }
 

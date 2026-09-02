@@ -113,7 +113,8 @@ export function spawnSandboxed(
   const startupInfo = allocStartupInfo()
   encodeStartupInfo(startupInfo, {
     cb: abi.STARTUPINFOW_SIZE,
-    dwFlags: abi.STARTF_USESTDHANDLES,
+    dwFlags: abi.STARTF_USESTDHANDLES | abi.STARTF_USESHOWWINDOW,
+    wShowWindow: abi.SW_HIDE,
     hStdInput: stdIn.read,
     hStdOutput: stdOut.write,
     hStdError: stdErr.write,
@@ -297,7 +298,8 @@ export function spawnSandboxedInherited(
   const startupInfo = allocStartupInfo()
   encodeStartupInfo(startupInfo, {
     cb: abi.STARTUPINFOW_SIZE,
-    dwFlags: abi.STARTF_USESTDHANDLES,
+    dwFlags: abi.STARTF_USESTDHANDLES | abi.STARTF_USESHOWWINDOW,
+    wShowWindow: abi.SW_HIDE,
     hStdInput: stdIn,
     hStdOutput: stdOut,
     hStdError: stdErr,

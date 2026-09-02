@@ -28,19 +28,6 @@ interface Koffi {
   view(ref: unknown, len: number): ArrayBuffer
 }
 
-/**
- * Read a NUL-terminated UTF-16 string at a native address. koffi's
- * `_Out_ void **` out-params surface a raw address, and
- * `koffi.decode(addr, 'str16')` would dereference it as a pointer — crash
- * on real Windows — so view the memory directly instead.
- */
-function readUtf16(koffi: Koffi, address: unknown): string {
-  const bytes = Buffer.from(koffi.view(address, 32768))
-  let end = 0
-  while (end + 1 < bytes.length && bytes[end] !== 0) end += 2
-  return bytes.toString('utf16le', 0, end)
-}
-
 const COINIT_APARTMENTTHREADED = 0x2
 const CLSCTX_INPROC_SERVER = 0x1
 const SIGDN_FILESYSPATH = 0x80058000 | 0
@@ -153,11 +140,17 @@ export async function loadWin32DialogBindings(): Promise<Win32DialogBindings> {
           if (gotItem < 0) return { hr: gotItem }
           const item = itemOut[0]
           try {
-            const nameOut: unknown[] = [null]
+            // Decode the out-pointer through a byte buffer instead of
+            // `koffi.view()`: the latter materializes an external ArrayBuffer,
+            // which Electron forbids (native abort). The buffer holds the
+            // COM-allocated PWSTR after the call, so `koffi.decode` can follow
+            // it without touching external buffers.
+            const nameOut = Buffer.alloc(pointerSize)
             const gotName = method(item, SLOT_GET_DISPLAY_NAME, protoGetDisplayName)(SIGDN_FILESYSPATH, nameOut)
             if (gotName < 0) return { hr: gotName }
-            const path = readUtf16(koffi, nameOut[0])
-            coTaskMemFree(nameOut[0])
+            const rawName = koffi.decode(nameOut, 'void *') as unknown
+            const path = koffi.decode(nameOut, 'str16') as string
+            coTaskMemFree(rawName)
             return { hr: gotName, path }
           } finally {
             method(item, SLOT_RELEASE, protoRelease)()
