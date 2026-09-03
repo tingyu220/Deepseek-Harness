@@ -1,0 +1,12 @@
+/* Sits between the frame's base background and the column content: a negative
+   z-index child of the isolated frame, so columns paint above it while the
+   frame's own opaque background stays beneath. */
+.canvas {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Theme-adaptive tech tint; the canvas reads this via getComputedStyle and
+     applies its own per-particle alpha. */
+  color: var(--dsw-alias-state-business-primary);
+}

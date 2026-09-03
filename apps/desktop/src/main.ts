@@ -1,5 +1,7 @@
 import { app, BrowserWindow, dialog, Menu, nativeImage, shell, Tray, type NativeImage } from 'electron'
-import { autoUpdater } from 'electron-updater'
+// electron-updater 是 CJS 包，ESM 里不能命名导入（运行时报错），必须默认导入再解构。
+import updaterPkg from 'electron-updater'
+const { autoUpdater } = updaterPkg
 import { runProfile } from '@deepseek-ai/dsh/profile-boot'
 import { loadLayeredEnv } from '@deepseek-ai/dsh-app-boot'
 import { createServer } from 'node:net'

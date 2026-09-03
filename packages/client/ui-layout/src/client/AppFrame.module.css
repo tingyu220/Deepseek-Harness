@@ -1,5 +1,6 @@
 .frame {
   position: relative; /* anchors the drag handles, which straddle column borders */
+  isolation: isolate; /* stacking context so the -1 backdrop sits above this background */
   display: grid;
   grid-template-rows: 100%;
   height: 100%;
