@@ -44,7 +44,7 @@ export function BinaryParticleBackground() {
           rise: 0.08 + Math.random() * 0.32,
           drift: (Math.random() - 0.5) * 0.24,
           char: Math.random() < 0.5 ? '0' : '1',
-          alpha: 0.08 + Math.random() * 0.15,
+          alpha: 0.18 + Math.random() * 0.22,
           blink: Math.random() * Math.PI * 2,
         })
       }

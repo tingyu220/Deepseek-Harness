@@ -130,6 +130,36 @@ async function createWhaleTrayIcon(): Promise<NativeImage> {
   return nativeImage.createEmpty()
 }
 
+/** Manual update check with user-facing feedback for every outcome. */
+async function manualCheckUpdate(): Promise<void> {
+  try {
+    const result = await autoUpdater.checkForUpdates()
+    if (result === null) {
+      await dialog.showMessageBox({
+        type: 'info',
+        title: '检查更新',
+        message: `当前已是最新版本（v${app.getVersion()}）`,
+        buttons: ['确定'],
+      })
+    } else {
+      await dialog.showMessageBox({
+        type: 'info',
+        title: '检查更新',
+        message: `发现新版本 v${result.updateInfo.version}，正在后台下载，完成后会提示重启。`,
+        buttons: ['确定'],
+      })
+    }
+  } catch (error) {
+    await dialog.showMessageBox({
+      type: 'warning',
+      title: '检查更新',
+      message: '检查更新失败，请稍后重试。',
+      detail: error instanceof Error ? error.message : String(error),
+      buttons: ['确定'],
+    })
+  }
+}
+
 async function boot(): Promise<void> {
   // The dsh host (cordis-plugin-hmr) resolves process.argv[1]; a packaged
   // Electron app has no script argument (argv[1] is undefined), so provide
@@ -190,7 +220,7 @@ async function boot(): Promise<void> {
   tray.setToolTip('DeepSeek Harness')
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: '显示 DeepSeek Harness', click: () => focusWindow() },
-    { label: '检查更新', click: () => { void autoUpdater.checkForUpdates().catch(() => undefined) } },
+    { label: '检查更新', click: () => { void manualCheckUpdate() } },
     { type: 'separator' },
     { label: '退出', click: () => { void quitApp(0) } },
   ]))
