@@ -134,7 +134,7 @@ async function createWhaleTrayIcon(): Promise<NativeImage> {
 async function manualCheckUpdate(): Promise<void> {
   try {
     const result = await autoUpdater.checkForUpdates()
-    if (result === null) {
+    if (result === null || !result.isUpdateAvailable) {
       await dialog.showMessageBox({
         type: 'info',
         title: '检查更新',
